@@ -13,6 +13,12 @@ const theme = createTheme({
   defaultRadius: "md",
 });
 
+interface ANSIState {
+  fg: number;
+  bg: number;
+  st: number;
+}
+
 export default function Home() {
   const textarea = "Welcome to Rebane's Discord Colored Text Generator!";
   const textareaRef = useRef<HTMLDivElement>(null);
@@ -66,9 +72,13 @@ export default function Home() {
   const handleCopy = () => {
     if (!textareaRef.current) return;
 
+    // const nodesToANSI = (
+    //   nodes: NodeList,
+    //   states: any[] = [{ fg: 37, bg: 40, st: 0 }]
+    // ): string => {
     const nodesToANSI = (
       nodes: NodeList,
-      states: any[] = [{ fg: 37, bg: 40, st: 0 }]
+      states: ANSIState[] = [{ fg: 37, bg: 40, st: 0 }]
     ): string => {
       let text = "";
 
