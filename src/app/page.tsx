@@ -1,7 +1,287 @@
-// src/app/page.tsx
+// "use client";
+
+// import { useState, useRef } from "react";
+
+// import '@mantine/core/styles.css';
+
+// export default function Home() {
+//   const [textarea, setTextarea] = useState<string>(
+//     "Welcome to Rebane's Discord Colored Text Generator!"
+//   );
+//   const textareaRef = useRef<HTMLDivElement>(null);
+//   const [copyCount, setCopyCount] = useState(0);
+
+//   const tooltipTexts = {
+//     "30": "Dark Gray",
+//     "31": "Red",
+//     "32": "Yellowish Green",
+//     "33": "Gold",
+//     "34": "Light Blue",
+//     "35": "Pink",
+//     "36": "Teal",
+//     "37": "White",
+//     "40": "Blueish Black",
+//     "41": "Rust Brown",
+//     "42": "Gray",
+//     "43": "Soft Gray",
+//     "44": "Light Gray",
+//     "45": "Blurple",
+//     "46": "Pale Gray",
+//     "47": "Cream White",
+//   };
+
+//   const handleStyleApply = (ansiCode: string) => {
+//     if (!window.getSelection) return;
+
+//     const selection = window.getSelection();
+//     if (!selection || selection.rangeCount === 0) return;
+
+//     const range = selection.getRangeAt(0);
+//     const selectedText = selection.toString();
+
+//     if (!selectedText) return;
+
+//     const span = document.createElement("span");
+//     span.className = `ansi-${ansiCode}`;
+//     span.textContent = selectedText;
+
+//     range.deleteContents();
+//     range.insertNode(span);
+
+//     const newRange = document.createRange();
+//     newRange.selectNodeContents(span);
+//     selection.removeAllRanges();
+//     selection.addRange(newRange);
+//   };
+
+//   const handleCopy = () => {
+//     if (!textareaRef.current) return;
+
+//     const nodesToANSI = (
+//       nodes: NodeList,
+//       states: any[] = [{ fg: 37, bg: 40, st: 0 }]
+//     ): string => {
+//       let text = "";
+
+//       nodes.forEach((node) => {
+//         if (node.nodeType === Node.TEXT_NODE) {
+//           text += node.textContent || "";
+//           return;
+//         }
+
+//         if (node.nodeName === "BR") {
+//           text += "\n";
+//           return;
+//         }
+
+//         if (node instanceof HTMLElement) {
+//           const ansiCode = node.className.split("-")[1]
+//             ? parseInt(node.className.split("-")[1])
+//             : 0;
+//           const newState = { ...states[states.length - 1] };
+
+//           if (ansiCode < 30) newState.st = ansiCode;
+//           if (ansiCode >= 30 && ansiCode < 40) newState.fg = ansiCode;
+//           if (ansiCode >= 40) newState.bg = ansiCode;
+
+//           states.push(newState);
+
+//           text += `\x1b[${newState.st};${
+//             ansiCode >= 40 ? newState.bg : newState.fg
+//           }m`;
+//           text += nodesToANSI(node.childNodes, states);
+//           states.pop();
+
+//           text += "\x1b[0m";
+
+//           if (states[states.length - 1].fg !== 37) {
+//             text += `\x1b[${states[states.length - 1].st};${
+//               states[states.length - 1].fg
+//             }m`;
+//           }
+//           if (states[states.length - 1].bg !== 40) {
+//             text += `\x1b[${states[states.length - 1].st};${
+//               states[states.length - 1].bg
+//             }m`;
+//           }
+//         }
+//       });
+
+//       return text;
+//     };
+
+//     const toCopy =
+//       "```ansi\n" + nodesToANSI(textareaRef.current.childNodes) + "\n```";
+
+//     navigator.clipboard
+//       .writeText(toCopy)
+//       .then(() => {
+//         setCopyCount((prev) => Math.min(11, prev + 1));
+//       })
+//       .catch(() => {
+//         alert("Copying failed, here's the text: " + toCopy);
+//       });
+//   };
+
+//   const handleReset = () => {
+//     if (textareaRef.current) {
+//       textareaRef.current.innerText = textarea;
+//     }
+//   };
+
+//   // Custom theme
+ 
+
+//   return (
+//     <MantineProvider theme={theme}>
+//       <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] py-12 px-4 sm:px-6 lg:px-8">
+//         <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 space-y-8">
+//           <h1 className="text-5xl font-bold text-center text-white mb-8">
+//             Discord <span className="text-indigo-400">Colored</span> Text Generator
+//           </h1>
+
+//           <div className="bg-white/20 rounded-xl p-6 text-white space-y-4">
+//             <h3 className="text-2xl font-semibold text-indigo-200">About</h3>
+//             <p className="text-white/90">
+//               Create vibrant, colorful messages for Discord using ANSI color codes
+//               available on the latest desktop versions.
+//             </p>
+//             <p className="text-white/90">
+//               Select text and apply colors, then copy to send in a Discord message.
+//             </p>
+//           </div>
+
+//           <div className="flex justify-center space-x-4 mb-6">
+//             <Tooltip label="Reset Text">
+//               <button
+//                 onClick={handleReset}
+//                 className="px-6 py-3 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+//               >
+//                 Reset
+//               </button>
+//             </Tooltip>
+
+//             <Tooltip label="Apply Bold Style">
+//               <button
+//                 onClick={() => handleStyleApply("1")}
+//                 className="px-6 py-3 bg-blue-500/80 hover:bg-blue-500 text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+//               >
+//                 Bold
+//               </button>
+//             </Tooltip>
+
+//             <Tooltip label="Apply Underline Style">
+//               <button
+//                 onClick={() => handleStyleApply("4")}
+//                 className="px-6 py-3 bg-green-500/80 hover:bg-green-500 text-white rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+//               >
+//                 Underline
+//               </button>
+//             </Tooltip>
+//           </div>
+
+//           <div className="space-y-6">
+//             <h4 className="text-xl font-semibold text-white text-center">Foreground Colors</h4>
+//             <div className="grid grid-cols-4 gap-4">
+//               {["30", "31", "32", "33", "34", "35", "36", "37"].map((code) => (
+//                 <Tooltip key={code} label={tooltipTexts[code as keyof typeof tooltipTexts]}>
+//                   <button
+//                     className="p-3 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
+//                     style={{
+//                       backgroundColor: `var(--ansi-${code})`,
+//                       color: 'white',
+//                     }}
+//                     onClick={() => handleStyleApply(code)}
+//                   >
+//                     {tooltipTexts[code as keyof typeof tooltipTexts]}
+//                   </button>
+//                 </Tooltip>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div className="space-y-6">
+//             <h4 className="text-xl font-semibold text-white text-center">Background Colors</h4>
+//             <div className="grid grid-cols-4 gap-4">
+//               {["40", "41", "42", "43", "44", "45", "46", "47"].map((code) => (
+//                 <Tooltip key={code} label={tooltipTexts[code as keyof typeof tooltipTexts]}>
+//                   <button
+//                     className="p-3 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
+//                     style={{
+//                       backgroundColor: `var(--ansi-${code}-bg)`,
+//                       color: 'white',
+//                     }}
+//                     onClick={() => handleStyleApply(code)}
+//                   >
+//                     {tooltipTexts[code as keyof typeof tooltipTexts]}
+//                   </button>
+//                 </Tooltip>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div
+//             ref={textareaRef}
+//             contentEditable
+//             className="bg-white/20 text-white p-4 rounded-xl min-h-[200px] border-2 border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//           >
+//             Welcome to <span className="ansi-33">Rebane</span>&apos;s{" "}
+//             <span className="ansi-45">
+//               <span className="ansi-37">Discord</span>
+//             </span>
+//             &nbsp;<span className="ansi-31">C</span>
+//             <span className="ansi-32">o</span>
+//             <span className="ansi-33">l</span>
+//             <span className="ansi-34">o</span>
+//             <span className="ansi-35">r</span>
+//             <span className="ansi-36">e</span>
+//             <span className="ansi-37">d</span>&nbsp;Text Generator!
+//           </div>
+
+//           <button
+//             onClick={handleCopy}
+//             className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-300 ease-in-out text-lg font-semibold"
+//           >
+//             {copyCount > 0
+//               ? [
+//                   "Copied!",
+//                   "Double Copy!",
+//                   "Triple Copy!",
+//                   "Dominating!!",
+//                   "Rampage!!",
+//                   "Mega Copy!!",
+//                   "Unstoppable!!",
+//                   "Wicked Sick!!",
+//                   "Monster Copy!!!",
+//                   "GODLIKE!!!",
+//                   "BEYOND GODLIKE!!!!",
+//                 ][copyCount - 1]
+//               : "Copy text as Discord formatted"}
+//           </button>
+
+//           <p className="text-center text-white/70 text-sm">
+//             This is an unofficial tool, not made or endorsed by Discord.
+//           </p>
+//         </div>
+//       </div>
+//     </MantineProvider>
+//   );
+// }
+
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Tooltip } from "@mantine/core";
+import "@mantine/core/styles.css";
+import {
+  MantineProvider,
+  // Tooltip,
+  createTheme,
+} from "@mantine/core";
+const theme = createTheme({
+  primaryColor: 'indigo',
+  defaultRadius: 'md',
+});
 
 export default function Home() {
   const [textarea, setTextarea] = useState<string>(
@@ -9,9 +289,10 @@ export default function Home() {
   );
   const textareaRef = useRef<HTMLDivElement>(null);
   const [copyCount, setCopyCount] = useState(0);
+  const [activeNoise, setActiveNoise] = useState(false);
 
   const tooltipTexts = {
-    "30": "Dark Gray (33%)",
+    "30": "Dark Gray",
     "31": "Red",
     "32": "Yellowish Green",
     "33": "Gold",
@@ -21,14 +302,15 @@ export default function Home() {
     "37": "White",
     "40": "Blueish Black",
     "41": "Rust Brown",
-    "42": "Gray (40%)",
-    "43": "Gray (45%)",
-    "44": "Light Gray (55%)",
+    "42": "Gray",
+    "43": "Soft Gray",
+    "44": "Light Gray",
     "45": "Blurple",
-    "46": "Light Gray (60%)",
+    "46": "Pale Gray",
     "47": "Cream White",
   };
 
+  // Rest of the previous functionality remains the same...
   const handleStyleApply = (ansiCode: string) => {
     if (!window.getSelection) return;
 
@@ -47,7 +329,6 @@ export default function Home() {
     range.deleteContents();
     range.insertNode(span);
 
-    // Reselect the styled text
     const newRange = document.createRange();
     newRange.selectNodeContents(span);
     selection.removeAllRanges();
@@ -116,21 +397,9 @@ export default function Home() {
     navigator.clipboard
       .writeText(toCopy)
       .then(() => {
-        const funnyCopyMessages = [
-          "Copied!",
-          "Double Copy!",
-          "Triple Copy!",
-          "Dominating!!",
-          "Rampage!!",
-          "Mega Copy!!",
-          "Unstoppable!!",
-          "Wicked Sick!!",
-          "Monster Copy!!!",
-          "GODLIKE!!!",
-          "BEYOND GODLIKE!!!!",
-        ];
-
+        setActiveNoise(true);
         setCopyCount((prev) => Math.min(11, prev + 1));
+        setTimeout(() => setActiveNoise(false), 1000);
       })
       .catch(() => {
         alert("Copying failed, here's the text: " + toCopy);
@@ -144,90 +413,178 @@ export default function Home() {
   };
 
   return (
-    <div className="container">
-      <h1>
-        Rebane&apos;s Discord <span style={{ color: "#5865F2" }}>Colored</span>{" "}
-        Text Generator
-      </h1>
+    <MantineProvider theme={theme}>
+      <div className="min-h-screen bg-black text-green-400 overflow-hidden relative">
+        {/* Cyberpunk Grid Background */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div className="absolute inset-0 bg-grid-green/10"></div>
+        </div>
 
-      <div>
-        <h3>About</h3>
-        <p>
-          This is a simple app that creates colored Discord messages using the
-          ANSI color codes available on the latest Discord desktop versions.
-        </p>
-        <p>
-          To use this, write your text, select parts of it and assign colors to
-          them, then copy it using the button below, and send in a Discord
-          message.
-        </p>
-      </div>
+        {/* Glitch Effect Container */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 py-16">
+          {/* Header with Glitch Effect */}
+          <h1 className="text-6xl font-bold text-center mb-12 relative">
+            <span
+              className="block absolute top-0 left-0 text-green-500 opacity-75 glitch-text"
+              data-text="Discord Color"
+            >
+              Discord Color
+            </span>
+            <span
+              className="block text-green-400 glitch-text"
+              data-text="Generator"
+            >
+              Generator
+            </span>
+          </h1>
 
-      <div>
-        <button onClick={handleReset}>Reset All</button>
-        <button onClick={() => handleStyleApply("1")}>Bold</button>
-        <button onClick={() => handleStyleApply("4")}>Line</button>
-      </div>
+          {/* Cyberpunk Info Panel */}
+          <div className="bg-black/80 border-2 border-green-500/50 rounded-xl p-6 mb-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-900/20 to-transparent opacity-20 pointer-events-none"></div>
+            <p className="text-green-300 relative z-10">
+              Hack the matrix of Discord messaging. Transform your text into a
+              neon-infused communication weapon.
+            </p>
+          </div>
 
-      <div>
-        <strong>Foreground Colors</strong>
-        {["30", "31", "32", "33", "34", "35", "36", "37"].map((code) => {
-          return (
-            <button
-              key={code}
-              // good tailwind style in className
-              className="text-white p-2 "
-              onClick={() => handleStyleApply(code)}
-              style={{ backgroundColor: `var(--ansi-${code})` }}
-            >{code}</button>
-          );
-        })}
-      </div>
+          {/* Control Panel */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <Tooltip label="Reset Cybernetic Text">
+              <button
+                onClick={handleReset}
+                className="bg-red-500/20 border-2 border-red-500/50 text-red-300 py-3 rounded-lg hover:bg-red-500/40 transition-all glitch-button"
+              >
+                Reset Protocol
+              </button>
+            </Tooltip>
 
-      <div>
-        <strong>Background Colors</strong>
-        {["40", "41", "42", "43", "44", "45", "46", "47"].map((code) => (
+            <Tooltip label="Engage Bold Encryption">
+              <button
+                onClick={() => handleStyleApply("1")}
+                className="bg-blue-500/20 border-2 border-blue-500/50 text-blue-300 py-3 rounded-lg hover:bg-blue-500/40 transition-all glitch-button"
+              >
+                Bold Cipher
+              </button>
+            </Tooltip>
+
+            <Tooltip label="Activate Underline Sequence">
+              <button
+                onClick={() => handleStyleApply("4")}
+                className="bg-purple-500/20 border-2 border-purple-500/50 text-purple-300 py-3 rounded-lg hover:bg-purple-500/40 transition-all glitch-button"
+              >
+                Underline Protocol
+              </button>
+            </Tooltip>
+          </div>
+
+          {/* Color Grids */}
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Foreground Colors */}
+            <div>
+              <h2 className="text-2xl mb-4 text-green-500 border-b border-green-500/50 pb-2">
+                Foreground Spectrums
+              </h2>
+              <div className="grid grid-cols-8 gap-3">
+                {["30", "31", "32", "33", "34", "35", "36", "37"].map(
+                  (code) => (
+                    <Tooltip
+                      key={code}
+                      label={tooltipTexts[code as keyof typeof tooltipTexts]}
+                    >
+                      <button
+                        className="w-12 h-12 rounded-full border-2 border-transparent hover:border-green-500 transition-all"
+                        style={{
+                          backgroundColor: `var(--ansi-${code})`,
+                          color: "white",
+                        }}
+                        onClick={() => handleStyleApply(code)}
+                      >
+                        {/* {tooltipTexts[code as keyof typeof tooltipTexts]} */}
+                      </button>
+                    </Tooltip>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Background Colors */}
+            <div>
+              <h2 className="text-2xl mb-4 text-green-500 border-b border-green-500/50 pb-2">
+                Background Layers
+              </h2>
+              <div className="grid grid-cols-8 gap-3">
+                {["40", "41", "42", "43", "44", "45", "46", "47"].map(
+                  (code) => (
+                    <Tooltip
+                      key={code}
+                      label={tooltipTexts[code as keyof typeof tooltipTexts]}
+                    >
+                      <button
+                        className="w-12 h-12 rounded-full border-2 border-transparent hover:border-green-500 transition-all"
+                        style={{
+                          backgroundColor: `var(--ansi-${code}-bg)`,
+                          color: "white",
+                        }}
+                        onClick={() => handleStyleApply(code)}
+                      >
+
+                      </button>
+                    </Tooltip>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Editable Textarea with Cyberpunk Style */}
+          <div
+            ref={textareaRef}
+            contentEditable
+            className="mt-8 min-h-[200px] bg-black/80 border-2 border-green-500/50 text-green-300 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 relative"
+          >
+            Welcome to <span className="ansi-33">Rebane</span>&apos;s{" "}
+            <span className="ansi-45">
+              <span className="ansi-37">Discord</span>
+            </span>
+            &nbsp;<span className="ansi-31">C</span>
+            <span className="ansi-32">o</span>
+            <span className="ansi-33">l</span>
+            <span className="ansi-34">o</span>
+            <span className="ansi-35">r</span>
+            <span className="ansi-36">e</span>
+            <span className="ansi-37">d</span>&nbsp;Text Generator!
+          </div>
+
+          {/* Hyper Copy Button */}
           <button
-            key={code}
-            onClick={() => handleStyleApply(code)}
-            style={{ backgroundColor: `var(--ansi-${code}-bg)` }}
-          >{code}</button>
-        ))}
+            onClick={handleCopy}
+            className={`w-full mt-6 py-4 bg-green-800/50 border-2 border-green-500 text-green-300 rounded-lg 
+          hover:bg-green-700/70 transition-all duration-300 relative overflow-hidden 
+          ${activeNoise ? "animate-noise" : ""}`}
+          >
+            {copyCount > 0
+              ? [
+                  "Copied!",
+                  "Double Copy!",
+                  "Triple Copy!",
+                  "Dominating!!",
+                  "Rampage!!",
+                  "Mega Copy!!",
+                  "Unstoppable!!",
+                  "Wicked Sick!!",
+                  "Monster Copy!!!",
+                  "GODLIKE!!!",
+                  "BEYOND GODLIKE!!!!",
+                ][copyCount - 1]
+              : "Inject Colored Text"}
+          </button>
+
+          <p className="text-center text-green-700 mt-4 text-sm">
+            Cybernetic transmission protocol: Unauthorized Discord color
+            manipulation engaged.
+          </p>
+        </div>
       </div>
-
-      <div ref={textareaRef} contentEditable className="textarea">
-        Welcome to <span className="ansi-33">Rebane</span>&apos;s{" "}
-        <span className="ansi-45">
-          <span className="ansi-37">Discord</span>
-        </span>
-        &nbsp;<span className="ansi-31">C</span>
-        <span className="ansi-32">o</span>
-        <span className="ansi-33">l</span>
-        <span className="ansi-34">o</span>
-        <span className="ansi-35">r</span>
-        <span className="ansi-36">e</span>
-        <span className="ansi-37">d</span>&nbsp;Text Generator!
-      </div>
-
-      <button onClick={handleCopy}>
-        {copyCount > 0
-          ? [
-              "Copied!",
-              "Double Copy!",
-              "Triple Copy!",
-              "Dominating!!",
-              "Rampage!!",
-              "Mega Copy!!",
-              "Unstoppable!!",
-              "Wicked Sick!!",
-              "Monster Copy!!!",
-              "GODLIKE!!!",
-              "BEYOND GODLIKE!!!!",
-            ][copyCount - 1]
-          : "Copy text as Discord formatted"}
-      </button>
-
-      <p>This is an unofficial tool, it is not made or endorsed by Discord.</p>
-    </div>
+    </MantineProvider>
   );
 }

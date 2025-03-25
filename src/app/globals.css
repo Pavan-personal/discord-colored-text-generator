@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* src/app/globals.css */
 :root {
   --ansi-30: #4f545c;
   --ansi-31: #dc322f;
@@ -20,6 +19,7 @@
   --ansi-46-bg: #93a1a1;
   --ansi-47-bg: #fdf6e3;
 }
+
 
 body {
   background-color: #36393F;
@@ -47,8 +47,8 @@ body {
   overflow: auto;
 }
 
-.ansi-1 { font-weight: bold; }
-.ansi-4 { text-decoration: underline; }
+.ansi-1 { font-weight:700; text-decoration:none;       }
+.ansi-4 { font-weight:500; text-decoration:underline;  }
 
 .ansi-30 { color: #4f545c; }
 .ansi-31 { color: #dc322f; }
@@ -58,3 +58,75 @@ body {
 .ansi-35 { color: #d33682; }
 .ansi-36 { color: #2aa198; }
 .ansi-37 { color: #ffffff; }
+
+.ansi-30-bg { background-color: #4f545c; }
+.ansi-31-bg { background-color: #dc322f; }
+.ansi-32-bg { background-color: #859900; }
+.ansi-33-bg { background-color: #b58900; }
+.ansi-34-bg { background-color: #268bd2; }
+.ansi-35-bg { background-color: #d33682; }
+.ansi-36-bg { background-color: #2aa198; }
+.ansi-37-bg { background-color: #ffffff; }
+
+.ansi-40 { background-color: #002b36; }
+.ansi-41 { background-color: #cb4b16; }
+.ansi-42 { background-color: #586e75; }
+.ansi-43 { background-color: #657b83; }
+.ansi-44 { background-color: #839496; }
+.ansi-45 { background-color: #6c71c4; }
+.ansi-46 { background-color: #93a1a1; }
+.ansi-47 { background-color: #fdf6e3; }
+
+
+
+
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+.animate-noise {
+  animation: noise 0.3s infinite;
+}
+
+.bg-grid-green {
+  background-image: 
+    linear-gradient(rgba(10, 255, 10, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 255, 10, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -2px 0 red;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: -2px 0 blue;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
